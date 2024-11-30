@@ -6,7 +6,7 @@ tlink = Script(src="https://cdn.tailwindcss.com"),
 dlink = Link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css")
 css = Style('.x {border:black solid 1px}  .down {position:absolute; bottom:10px; right:10px} ')
 
-app = FastHTML(hdrs=(tlink, dlink, picolink, css))
+app = FastHTML(hdrs=(tlink, dlink, css))
 
 
 @app.route('/')
@@ -31,6 +31,7 @@ def get():
     )
 
     page = Body(
+        A("Liste", href="/list", cls="absolute top-4 right-4 text-blue-500 hover:text-blue-700 font-semibold"),
         Div(
             H1(
                 f"Il en reste {get_num_of_not_yet_discovered_eggs()} ...",
@@ -124,6 +125,7 @@ def post(egg_code: EggCode):
 
 
 def make_line(egg):
+    color = "bg-blue-600" if egg['decouvert_par'] == "" else "bg-gray-700"
     line = Tr(
         Td(egg['id'], cls="border border-gray-700 px-4 py-2"),
         Td(egg['cours'], cls="border border-gray-700 px-4 py-2"),
@@ -131,14 +133,15 @@ def make_line(egg):
         Td(egg['indice'], cls="border border-gray-700 px-4 py-2"),
         Td(egg['decouvert_par'], cls="border border-gray-700 px-4 py-2"),
         Td(egg['decouvert_le'], cls="border border-gray-700 px-4 py-2"),
-        cls="bg-gray-700",
+        cls=color,
     ),
     return line
 
 
 @app.route('/list')
 def get():
-    page = Body(
+    page = Div(
+        A("home", href="/", cls="absolute top-4 right-4 text-blue-500 hover:text-blue-700 font-semibold"),
         H1("Suivi des Découvertes", cls="text-4xl font-bold text-gray-100 mb-8"),
         Div(
             Table(
