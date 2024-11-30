@@ -64,7 +64,8 @@ def found_egg(egg: EggCode):
 
         response = supabase_client.table("eggs").update({
             "decouvert_par": egg.name,
-            "decouvert_le": now
+            "decouvert_le": now,
+            "noma": egg.noma,
         }).eq("code", egg.code).execute()
 
         if response.get("data"):
