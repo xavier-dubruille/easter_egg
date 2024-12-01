@@ -48,10 +48,13 @@ def get():
     )
 
     page = Body(
-        A("Liste", href="/list", cls="absolute top-4 right-4 text-blue-500 hover:text-blue-700 font-semibold"),
         Div(
             H1(
-                f"Il en reste {get_num_of_not_yet_discovered_eggs()} ...",
+                f"Il en reste ",
+                A(f"{get_num_of_not_yet_discovered_eggs()}",
+                  cls="text-blue-500 hover:text-blue-700 font-semibold",
+                  href="/list"),
+                " ...",
                 id="main_title",
                 cls="text-4xl font-bold text-gray-100 m-4",
             ),
