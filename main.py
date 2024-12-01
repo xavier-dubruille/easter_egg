@@ -26,7 +26,7 @@ app = FastHTML(hdrs=(tlink, dlink, css))
 
 @app.route('/')
 def get():
-    first_form = Form(
+    small_form = Form(
         Input(
             inputmode="text",
             name="code",
@@ -43,7 +43,7 @@ def get():
             style="margin:4px; display: flex; align-items: center; gap: 8px;"
         ),
         hx_post="/check",
-        id="main_from",
+        hx_target="body",
         cls="flex justify-center items-center space-x-4, space-y-4",
     )
 
@@ -55,13 +55,14 @@ def get():
                   cls="text-blue-500 hover:text-blue-700 font-semibold",
                   href="/list"),
                 " ...",
-                id="main_title",
                 cls="text-4xl font-bold text-gray-100 m-4",
             ),
-            first_form,
+            small_form,
             cls="text-center space-y-8",
         ),
         cls="h-screen bg-gray-900 text-white flex items-center justify-center",
+        style="flex-direction: column",
+        id="body"
     )
 
     return page
@@ -73,76 +74,91 @@ async def post(egg_code: EggCode):
     if stutus == EGG_STATUS.NOT_FOUND:
         await asyncio.sleep(5)
         titre = H1(
-            f"Désolé, cet Easter Egg n'existe pas ...",
-            id="main_title",
-            hx_swap_oob=true,
+            A("Désolé, cet Easter Egg n'existe pas ...", href="/"),
             cls="text-4xl font-bold text-gray-100 m-4",
         )
-        return titre, Div("")
+        return titre
     if stutus == EGG_STATUS.ALREADY_FOUND:
         titre = H1(
-            f"Désolé, cet Easter Egg a déjà été trouvé.",
-            id="main_title",
-            hx_swap_oob=true,
+            A("Désolé, cet Easter Egg a déjà été trouvé.", href="/"),
             cls="text-4xl font-bold text-gray-100 m-4",
         )
-        return titre, Div("")
+        return titre
 
     # if we are here, then code is correct
     if egg_code.noma is not None and egg_code.noma != "" and egg_code.name is not None and egg_code.name != "":
-        found_egg(egg_code)
+        egg_code.name = egg_code.name.title()
+        db_egg = found_egg(egg_code)
         titre = H1(
-            f"Bravo !  Ton easter egg a bien été enregistré",
-            id="main_title",
-            hx_swap_oob=true,
+            f"Bravo {egg_code.name} !  Tu as validé l'Easter Egg numéro ",
+            A(f'{db_egg.get("id")}', href="/list", cls="text-blue-500 hover:text-blue-700 font-semibold", ),
             cls="text-4xl font-bold text-gray-100 m-4",
         )
-        return titre, Div("")
+        return titre
+
+    # if we are here, then the code is correct, but we don't have all the information yet
 
     titre = H1(
         f"Bravo ! Veillez encoder ces infos pour finaliser votre trouvaille",
         id="main_title",
-        hx_swap_oob=true,
         cls="text-4xl font-bold text-gray-100 m-4",
     )
     full_form = Form(
-        Input(
-            inputmode="text",
-            name="code",
-            placeholder="egg_code",
-            value=egg_code.code,
-            cls="bg-gray-800 border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ",
-            style="margin:4px"
+        Div(
+            Label(
+                "Code Egg", _for="code", cls="mb-2 text-sm font-medium text-gray-300"
+            ),
+            Input(
+                inputmode="text",
+                name="code",
+                placeholder="egg_code",
+                value=egg_code.code,
+                cls="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full",
+            ),
+            cls="flex flex-col",
         ),
-        Input(
-            inputmode="text",
-            name="name",
-            value=egg_code.name,
-            placeholder="John Doe",
-            cls="bg-gray-800 border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ",
-            style="margin:4px"
+        Div(
+            Label(
+                "Nom Complet", _for="name", cls="mb-2 text-sm font-medium text-gray-300"
+            ),
+            Input(
+                inputmode="text",
+                name="name",
+                value=egg_code.name,
+                placeholder="John Doe",
+                cls="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full",
+            ),
+            cls="flex flex-col",
         ),
-        Input(
-            inputmode="text",
-            name="noma",
-            value=egg_code.noma,
-            placeholder="he42645",
-            cls="bg-gray-800 border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ",
-            style="margin:4px"
+        Div(
+            Label(
+                "Numéro Étudiant",
+                _for="noma",
+                cls="mb-2 text-sm font-medium text-gray-300",
+            ),
+            Input(
+                inputmode="text",
+                name="noma",
+                value=egg_code.noma,
+                placeholder="he42645",
+                cls="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full",
+            ),
+            id="main_from",
+            cls="flex flex-col",
         ),
         Button(
-            "Send",
-            type="submit",
+            "Envoyer",
+            inputmode="submit",
             hx_indicator="#spinner",
-            cls="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ",
-            style="margin:4px; width:auto"
+            cls="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500",
         ),
         hx_post="/check",
-        id="main_from",
-        cls="flex justify-center items-center space-x-4, space-y-4",
+        hx_target="body",
+        hx_swap="outerHTML",
+        cls="max-w-md w-full mx-auto p-6 space-y-4 bg-gray-800 rounded-lg shadow-md m-5",
     )
 
-    return full_form, titre
+    return titre, full_form
 
 
 def make_line(egg):

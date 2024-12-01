@@ -10,7 +10,7 @@ _supabase = None
 
 @dataclass
 class EggCode:
-    code: str
+    code: str = ""
     name: str = ""
     noma: str = ""
 
@@ -68,10 +68,7 @@ def found_egg(egg: EggCode):
             "noma": egg.noma,
         }).eq("code", egg.code).execute()
 
-        if response.get("data"):
-            print(f"L'entrée avec le code '{egg.code}' a été mise à jour avec succès.")
-        else:
-            print(f"Aucune entrée trouvée pour le code : {egg.code}")
+        return response.data[0]
 
     except Exception as e:
         print(f"Erreur lors de la mise à jour : {e}")
