@@ -1,10 +1,25 @@
+import asyncio
+
 from fasthtml.common import *
 
 from db_utils import get_eggs, get_num_of_not_yet_discovered_eggs, get_code_status, EGG_STATUS, EggCode, found_egg
 
 tlink = Script(src="https://cdn.tailwindcss.com"),
 dlink = Link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css")
-css = Style('.x {border:black solid 1px}  .down {position:absolute; bottom:10px; right:10px} ')
+css = Style("""
+    .x {border:black solid 1px}  
+    .down {position:absolute;bottom:10px; right:10px} 
+    .htmx-indicator{
+        opacity:0;
+        transition: opacity 500ms ease-in;
+    }
+    .htmx-request .htmx-indicator{
+        opacity:1;
+    }
+    .htmx-request.htmx-indicator{
+        opacity:1;
+    }
+    """)
 
 app = FastHTML(hdrs=(tlink, dlink, css))
 
@@ -21,9 +36,11 @@ def get():
         ),
         Button(
             "Check",
+            Img(id="spinner", cls="htmx-indicator", src="https://htmx.org/img/bars.svg", alt="Loading",
+                style="height: 16px;"),
             type="submit",
-            cls="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ",
-            style="margin:4px; width:auto"
+            cls="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500",
+            style="margin:4px; display: flex; align-items: center; gap: 8px;"
         ),
         hx_post="/check",
         id="main_from",
@@ -48,12 +65,12 @@ def get():
 
 
 @app.route('/check')
-def post(egg_code: EggCode):
+async def post(egg_code: EggCode):
     stutus = get_code_status(egg_code.code)
     if stutus == EGG_STATUS.NOT_FOUND:
-        # sleep
+        await asyncio.sleep(5)
         titre = H1(
-            f"Désolé, cet easter egg n'existe pas.",
+            f"Désolé, cet Easter Egg n'existe pas ...",
             id="main_title",
             hx_swap_oob=true,
             cls="text-4xl font-bold text-gray-100 m-4",
@@ -61,7 +78,7 @@ def post(egg_code: EggCode):
         return titre, Div("")
     if stutus == EGG_STATUS.ALREADY_FOUND:
         titre = H1(
-            f"Désolé, cet easter egg a déjà été trouvé.",
+            f"Désolé, cet Easter Egg a déjà été trouvé.",
             id="main_title",
             hx_swap_oob=true,
             cls="text-4xl font-bold text-gray-100 m-4",
@@ -98,7 +115,7 @@ def post(egg_code: EggCode):
             inputmode="text",
             name="name",
             value=egg_code.name,
-            placeholder="John",
+            placeholder="John Doe",
             cls="bg-gray-800 border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ",
             style="margin:4px"
         ),
@@ -106,13 +123,14 @@ def post(egg_code: EggCode):
             inputmode="text",
             name="noma",
             value=egg_code.noma,
-            placeholder="he42",
+            placeholder="he42645",
             cls="bg-gray-800 border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ",
             style="margin:4px"
         ),
         Button(
-            "Check",
+            "Send",
             type="submit",
+            hx_indicator="#spinner",
             cls="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ",
             style="margin:4px; width:auto"
         ),
