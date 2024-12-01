@@ -39,7 +39,7 @@ def get_eggs():
     supabase_client: Client = get_supa_client()
 
     response = supabase_client.table("eggs").select("*").execute()
-    return response.data if response else None
+    return sorted(response.data, key=lambda x: x['id']) if response else None
 
 
 def get_num_of_not_yet_discovered_eggs():

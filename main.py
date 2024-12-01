@@ -36,7 +36,9 @@ def get():
         ),
         Button(
             "Check",
-            Img(id="spinner", cls="htmx-indicator", src="https://htmx.org/img/bars.svg", alt="Loading",
+            Img(id="spinner", cls="htmx-indicator",
+                src="https://raw.githubusercontent.com/SamHerbert/SVG-Loaders/5deed925369e57e9c58ba576ce303466984db501/svg-loaders/three-dots.svg",
+                alt="Loading",
                 style="height: 16px;"),
             type="submit",
             cls="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500",
@@ -65,7 +67,7 @@ def get():
         id="body"
     )
 
-    return page
+    return Title("TI Easter Eggs"), page
 
 
 @app.route('/check')
@@ -162,7 +164,7 @@ async def post(egg_code: EggCode):
 
 
 def make_line(egg):
-    color = "bg-blue-600" if egg['decouvert_par'] == "" else "bg-gray-700"
+    color = "bg-gray-700" if egg['decouvert_par'] else "bg-blue-600"
     line = Tr(
         Td(egg['id'], cls="border border-gray-700 px-4 py-2"),
         Td(egg['cours'], cls="border border-gray-700 px-4 py-2"),
