@@ -49,10 +49,10 @@ def get_num_of_not_yet_discovered_eggs():
 def get_code_status(code: str):
     egg = next((d for d in get_eggs() if d.get("code") == code), None)
     if egg is None:
-        return EGG_STATUS.NOT_FOUND
+        return EGG_STATUS.NOT_FOUND, ""
     if egg['decouvert_par'] is None or egg['decouvert_par'] == "":
-        return EGG_STATUS.SUCCESS
-    return EGG_STATUS.ALREADY_FOUND
+        return EGG_STATUS.SUCCESS, ""
+    return EGG_STATUS.ALREADY_FOUND, egg['decouvert_par']
 
 
 def found_egg(egg: EggCode):

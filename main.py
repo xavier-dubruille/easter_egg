@@ -73,17 +73,20 @@ def get():
 
 @app.route('/check')
 async def post(egg_code: EggCode):
-    stutus = get_code_status(egg_code.code)
-    if stutus == EGG_STATUS.NOT_FOUND:
+    status, finder = get_code_status(egg_code.code)
+    if status == EGG_STATUS.NOT_FOUND:
         await asyncio.sleep(5)
         titre = H1(
-            A("Désolé, cet Easter Egg n'existe pas ...", href="/"),
+            A("Désolé, cet Easter Egg n'existe pas...", href="/"),
             cls="text-4xl font-bold text-gray-100 m-4",
         )
         return titre
-    if stutus == EGG_STATUS.ALREADY_FOUND:
+    if status == EGG_STATUS.ALREADY_FOUND:
         titre = H1(
-            A("Désolé, cet Easter Egg a déjà été trouvé.", href="/"),
+            A(f"Bravo, tu as trouvé un Easter Egg !  Malheureusement, il a déjà été trouvé par ",
+              Span(finder, cls="text-blue-700"), NotStr('.<br><br>'),
+              "Continue, ton heure de gloire viendra !",
+              href="/"),
             cls="text-4xl font-bold text-gray-100 m-4",
         )
         return titre
