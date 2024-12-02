@@ -41,6 +41,7 @@ def get():
                 alt="Loading",
                 style="height: 16px;"),
             type="submit",
+            hx_indicator="#spinner",
             cls="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500",
             style="margin:4px; display: flex; align-items: center; gap: 8px;"
         ),
@@ -200,7 +201,7 @@ def get():
                 ),
                 cls="table-auto w-full border-collapse border border-gray-700 text-left",
             ),
-            cls="w-3/4",
+            cls="w-3/4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200",
         ),
         cls="h-screen bg-gray-900 text-white flex flex-col items-center justify-center",
     )
