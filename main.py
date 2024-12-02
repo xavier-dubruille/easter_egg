@@ -83,8 +83,8 @@ async def post(egg_code: EggCode):
         return titre
     if status == EGG_STATUS.ALREADY_FOUND:
         titre = H1(
-            A(f"Bravo, tu as trouvé un Easter Egg ! ", NotStr('.<br><br>'),
-              " Malheureusement, il a déjà été trouvé par ", Span(finder, cls="text-blue-700"),
+            A(f"Bravo, tu as trouvé un Easter Egg ! ", NotStr('<br><br>'),
+              "Malheureusement, il a déjà été trouvé par ", Span(finder, cls="text-blue-700"),
               NotStr('.<br>'),
               "Continue, ton heure de gloire viendra !",
               href="/"),
