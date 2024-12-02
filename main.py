@@ -206,7 +206,7 @@ def get():
         cls="h-screen bg-gray-900 text-white flex flex-col items-center justify-center",
     )
 
-    return page
+    return Title("TI Easter Eggs"), page
 
 
 serve()
